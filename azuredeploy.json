@@ -33,30 +33,26 @@
             "apiVersion": "2021-02-01",
             "name": "[concat(parameters('functionAppName'), uniqueString(resourceGroup().id))]",
             "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id)))]",
-                "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
-                "[resourceId('microsoft.insights/components', parameters('applicationInsightsName'))]"
-            ],
             "kind": "functionapp",
             "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
                 "siteConfig": {
                     "appSettings": [
                         {
-                            "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id)), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id))), '2021-04-01').keys[0].value)]"
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "python"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
                             "value": "~4"
                         },
                         {
-                            "name": "FUNCTIONS_WORKER_RUNTIME",
-                            "value": "python"
-                        },
-                        {
                             "name": "WEBSITE_RUN_FROM_PACKAGE",
                             "value": "https://raw.githubusercontent.com/BrandonErkamaa/AzureFunctionPythonWithARM/main/functionapp.zip"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id)), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id))), '2021-04-01').keys[0].value)]"
                         },
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -64,9 +60,15 @@
                         }
                     ]
                 },
-                "httpsOnly": true,
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
-            }
+                "siteConfig": {
+                    "linuxFxVersion": "PYTHON|3.9"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id)))]",
+                "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+                "[resourceId('microsoft.insights/components', parameters('applicationInsightsName'))]"
+            ]
         },
         {
             "type": "microsoft.insights/components",
