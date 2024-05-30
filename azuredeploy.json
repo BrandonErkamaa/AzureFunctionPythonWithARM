@@ -25,7 +25,9 @@
                 "tier": "Dynamic"
             },
             "properties": {
-                "name": "[parameters('hostingPlanName')]"
+                "name": "[parameters('hostingPlanName')]",
+                "reserved": true, // This specifies that the App Service Plan is Linux
+                "kind": "linux"
             }
         },
         {
@@ -44,7 +46,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~3"
+                            "value": "~4"
                         },
                         {
                             "name": "WEBSITE_RUN_FROM_PACKAGE",
