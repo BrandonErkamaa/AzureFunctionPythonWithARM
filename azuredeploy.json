@@ -31,7 +31,7 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2021-02-01",
-            "name": "[parameters('functionAppName')]",
+            "name": "[concat(parameters('functionAppName'), uniqueString(resourceGroup().id))]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id)))]",
