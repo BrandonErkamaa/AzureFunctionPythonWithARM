@@ -16,13 +16,27 @@
             }
         },
         {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2021-02-01",
+            "name": "[parameters('hostingPlanName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic"
+            },
+            "properties": {
+                "name": "[parameters('hostingPlanName')]"
+            }
+        },
+        {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2021-02-01",
             "name": "[parameters('functionAppName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', concat(parameters('storageAccountName'), uniqueString(resourceGroup().id)))]",
-                "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+                "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+                "[resourceId('microsoft.insights/components', parameters('applicationInsightsName'))]"
             ],
             "kind": "functionapp",
             "properties": {
@@ -41,26 +55,17 @@
                             "value": "python"
                         },
                         {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "https://raw.githubusercontent.com/BrandonErkamaa/AzureFunctionPythonWithARM/main/functionapp.zip"
+                        },
+                        {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                             "value": "[reference(resourceId('microsoft.insights/components', parameters('applicationInsightsName')), '2020-02-02').InstrumentationKey]"
                         }
                     ]
                 },
                 "httpsOnly": true,
-                "serverFarmId": "[parameters('hostingPlanName')]"
-            }
-        },
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2021-02-01",
-            "name": "[parameters('hostingPlanName')]",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Y1",
-                "tier": "Dynamic"
-            },
-            "properties": {
-                "name": "[parameters('hostingPlanName')]"
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
             }
         },
         {
