@@ -30,10 +30,10 @@
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2021-02-01",
+            "apiVersion": "2018-11-01",
             "name": "[concat(parameters('functionAppName'), uniqueString(resourceGroup().id))]",
             "location": "[resourceGroup().location]",
-            "kind": "functionapp",
+            "kind": "functionapp,linux",
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
                 "siteConfig": {
@@ -44,7 +44,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~4"
+                            "value": "~3"
                         },
                         {
                             "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -59,9 +59,6 @@
                             "value": "[reference(resourceId('microsoft.insights/components', parameters('applicationInsightsName')), '2020-02-02').InstrumentationKey]"
                         }
                     ]
-                },
-                "siteConfig": {
-                    "linuxFxVersion": "PYTHON|3.9"
                 }
             },
             "dependsOn": [
